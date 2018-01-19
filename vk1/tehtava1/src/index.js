@@ -24,8 +24,9 @@ const Yhteensa = (props) => {
   <p> Yhteensä {props.osat[0].tehtavia + props.osat[1].tehtavia + props.osat[2].tehtavia} tehtävää</p>
 )}
 const App = () => {
-  const kurssi = 'Half Stack -sovelluskehitys'
-  const osat = [
+  const kurssi = {
+    nimi: 'Half Stack -sovelluskehitys',
+    osat: [
     {
       nimi: 'Reactin perusteet',
       tehtavia: 10
@@ -39,11 +40,12 @@ const App = () => {
       tehtavia: 14
     }
   ]
+}
   return (
     <div>
-      <Kurssi kurssi= {kurssi}/>
-      <Sisalto osat={osat} />
-      <Yhteensa osat={osat} />
+      <Kurssi kurssi= {kurssi.nimi}/>
+      <Sisalto osat={kurssi.osat} />
+      <Yhteensa osat={kurssi.osat} />
     </div>
   )
 }
