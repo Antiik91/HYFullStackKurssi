@@ -3,50 +3,41 @@ import ReactDOM from 'react-dom'
 
 class App extends React.Component{
   constructor(props) {
-    /*Tehtävä 1.7 tekemäti */
+
     super(props)
     this.state = {
       good: 0,
       neutral: 0,
-      bad: 0,
-      ka: 0,
-      pos: 0
+      bad: 0
     }
+    this.click = this.click.bind(this)
   }
-  updateStats = () => {
-      console.log('HEIMOI');
-      this.setState ({
-        ka: this.state.ka +2
-      })
-  }
-  click = (feedback) => {
-      return () => {}
-      this.setState ({
-        good:feedback+2
-      })
+  click = (gnb,value) => {
+      if(gnb === 'good') {
+        return () => {
+          this.setState ({
+            good:value
+          })
+        }
+      }else if (gnb === 'neutral') {
+        return () => {
+          this.setState ({
+            neutral: value
+          })
+        }
+      }
+      return () => {
+        this.setState ({
+          bad: value
+        })
+      }
     }
 
-  handleGood = () => {
-    this.setState ({
-      good: this.state.good +1
-    })
-    this.updateStats
-  }
-  handleNeutral = () => {
-    this.setState ({
-      neutral: this.state.neutral +1
-    })
-  }
-  handleBad = () => {
-    this.setState ({
-      bad: this.state.bad +1
-    })
-  }
   render() {
     const Button =({handleClick, text}) => (
       <button onClick={handleClick}>
        {text}
-       </button>
+      </button>
     )
     const Statistic =({statistic,text}) => {
       if(text==='positiivisia') {
@@ -55,7 +46,7 @@ class App extends React.Component{
       return (<p> {text} {statistic} </p>)
     }
     const Statistics = ({stats,total}) => {
-      if(total==0){
+      if(total===0){
         return <div> ei yhtään palautetta annettu </div>
       }
       return (
@@ -65,12 +56,12 @@ class App extends React.Component{
           <Statistic text={stats[2].name} statistic={stats[2].value} />
           <Statistic text={stats[3].name} statistic={stats[3].value} />
           <Statistic text={stats[4].name} statistic={stats[4].value} />
-          </div>
+        </div>
         )
     }
     const total = () => this.state.bad + this.state.good + this.state.neutral
     const average = () => {
-      let all = this.state.bad + this.state.neutral + this.state.good
+    const all = total()
       if(all === 0) {
         return 0
       } else {
@@ -78,7 +69,7 @@ class App extends React.Component{
       }
     }
     const positive = () => {
-      let all = this.state.bad + this.state.neutral + this.state.good
+      const all = total()
       if(all === 0) return 0
       return Math.round((this.state.good / all) * 1000) / 10
     }
@@ -108,13 +99,13 @@ class App extends React.Component{
       <div>
         <h3> anna palautetta </h3>
           <Button
-            handleClick={this.handleGood}
+            handleClick={this.click("good",this.state.good +1)}
             text="hyvä" />
             <Button
-              handleClick={this.handleNeutral}
+              handleClick={this.click("neutral",this.state.neutral+1)}
               text="neutraali" />
             <Button
-              handleClick={this.handleBad}
+              handleClick={this.click("bad",this.state.bad +1)}
               text="huono" />
 
         <h3> statistiikka </h3>
