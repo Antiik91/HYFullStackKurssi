@@ -43,6 +43,32 @@ class App extends React.Component{
     })
   }
   render() {
+    const Button =({handleClick, text}) => (
+      <button onClick={handleClick}>
+       {text}
+       </button>
+    )
+    const Statistic =({statistic,text}) => {
+      if(text==='positiivisia') {
+        return (<p> {text} {statistic} %</p>)
+      }
+      return (<p> {text} {statistic} </p>)
+    }
+    const Statistics = ({stats,total}) => {
+      if(total==0){
+        return <div> ei yhtään palautetta annettu </div>
+      }
+      return (
+        <div>
+          <Statistic text={stats[0].name} statistic={stats[0].value} />
+          <Statistic text={stats[1].name} statistic={stats[1].value} />
+          <Statistic text={stats[2].name} statistic={stats[2].value} />
+          <Statistic text={stats[3].name} statistic={stats[3].value} />
+          <Statistic text={stats[4].name} statistic={stats[4].value} />
+          </div>
+        )
+    }
+    const total = () => this.state.bad + this.state.good + this.state.neutral
     const average = () => {
       let all = this.state.bad + this.state.neutral + this.state.good
       if(all === 0) {
@@ -56,18 +82,43 @@ class App extends React.Component{
       if(all === 0) return 0
       return Math.round((this.state.good / all) * 1000) / 10
     }
+    const stats = [
+      {
+      name: 'hyvä',
+      value: this.state.good
+    },
+    {
+      name: 'neutraali',
+      value: this.state.neutral
+    },
+    {
+      name:'huono',
+      value: this.state.bad
+    },
+    {
+      name: 'keskiarvo',
+      value: average()
+    },
+    {
+      name: 'positiivisia',
+      value: positive()
+    }
+    ]
     return (
       <div>
         <h3> anna palautetta </h3>
-          <button onClick={this.handleGood}>hyvä</button>
-          <button onClick={this.handleNeutral}>neutraali</button>
-          <button onClick={this.handleBad}>huono</button>
+          <Button
+            handleClick={this.handleGood}
+            text="hyvä" />
+            <Button
+              handleClick={this.handleNeutral}
+              text="neutraali" />
+            <Button
+              handleClick={this.handleBad}
+              text="huono" />
+
         <h3> statistiikka </h3>
-          <p> hyvä {this.state.good} </p>
-          <p> neutraali {this.state.neutral} </p>
-          <p> huono {this.state.bad} </p>
-          <p> keskiarvo {average()} </p>
-          <p> positivisia {positive()} %</p>
+         <Statistics stats={stats} total={total()}/>
       </div>
     )
   }
