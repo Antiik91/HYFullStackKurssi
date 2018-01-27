@@ -20,11 +20,17 @@ class App extends React.Component {
        name: this.state.newName,
        id: this.state.newName
      }
+     let index = this.state.persons.findIndex(x => x.name === this.state.newName)
+     if(index === -1) {
      const persons = this.state.persons.concat(personObject)
+
      this.setState({
        persons,
        newName: ''
      })
+   } else {
+     alert('Valitsemasi nimi on jo listassa!')
+   }
   }
   render() {
     return (
