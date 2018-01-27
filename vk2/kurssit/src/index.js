@@ -13,22 +13,33 @@ const Yhteensa = ({osat}) => {
     return sum + osa.tehtavia
   },0)
   return(
-    <p>yhteensä {total} tehtävää</p>
+    <li>yhteensä {total} tehtävää</li>
   )
 }
-
+const Kurssit = ( {kurssit} ) => {
+  console.log(kurssit)
+  return(
+     kurssit.map(kurssi => <li key={kurssi.id}><Kurssi key={kurssi.id} kurssi={kurssi} /></li>)
+   )
+}
 const Kurssi = ({ kurssi }) => {
   return (
-    <div>
-    <Otsikko kurssi = {kurssi} />
-    <Sisalto osat = {kurssi.osat} />
-    <Yhteensa osat = {kurssi.osat} />
-    </div>
+      <ul>
+        <li key ={kurssi.id}>
+          <Otsikko kurssi = {kurssi} />
+          <ul>
+            <Sisalto osat = {kurssi.osat} />
+            <Yhteensa osat = {kurssi.osat} />
+          </ul>
+        </li>
+      </ul>
   )
 }
 const App = () => {
-  const kurssi = {
+  const kurssit = [
+  {
     nimi: 'Half Stack -sovelluskehitys',
+    id: 1,
     osat: [
       {
         id: 1,
@@ -46,10 +57,30 @@ const App = () => {
         tehtavia: 14
       }
     ]
+  },
+  {
+    nimi: 'Node.js',
+    id: 2,
+    osat: [
+      {
+        id: 1,
+        nimi: 'Routing',
+        tehtavia: 2
+      },
+      {
+        id: 2,
+        nimi: 'Middlewaret',
+        tehtavia: 7
+      }
+    ]
   }
+]
   return (
     <div>
-      <Kurssi kurssi={kurssi} />
+    <h1> Opetusohejlma </h1>
+    <ul>
+      <Kurssit kurssit={kurssit} />
+    </ul>
     </div>
   )
 }
