@@ -1,20 +1,23 @@
 import React from 'react';
 import Person from './Person'
+import axios from 'axios'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      persons: [
-        { name: 'Arto Hellas', number: "040-5112312" },
-        { name: 'Ville Valpas', number: "040-123411" },
-        { name: 'Arto Kallas', number: "040-6545565" },
-        { name: 'Jarno Jollas', number: "040-51141412312" }
-      ],
+      persons: [],
       newName: '',
       newNumber: '',
       filter: ''
     }
+  }
+  componentWillMount() {
+    axios
+      .get('http://localhost:3001/persons')
+      .then(response => {
+        this.setState({persons: response.data})
+      })
   }
   handlePersonChange = (event) => {
     this.setState({newName: event.target.value})
@@ -36,7 +39,6 @@ class App extends React.Component {
      let index = this.state.persons.findIndex(x => x.name === this.state.newName)
      if(index === -1) {
        const persons = this.state.persons.concat(personObject)
-
      this.setState({
        persons,
        newName: '',
