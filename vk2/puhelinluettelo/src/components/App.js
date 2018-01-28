@@ -6,10 +6,14 @@ class App extends React.Component {
     super(props)
     this.state = {
       persons: [
-        { name: 'Arto Hellas', number: "040-5112312" }
+        { name: 'Arto Hellas', number: "040-5112312" },
+        { name: 'Ville Valpas', number: "040-123411" },
+        { name: 'Arto Kallas', number: "040-6545565" },
+        { name: 'Jarno Jollas', number: "040-51141412312" }
       ],
       newName: '',
-      newNumber: ''
+      newNumber: '',
+      filter: ''
     }
   }
   handlePersonChange = (event) => {
@@ -18,6 +22,10 @@ class App extends React.Component {
   handleNumberChange = (event) => {
     this.setState({newNumber: event.target.value})
   }
+  handleFiltering = (event) => {
+    this.setState({filter: event.target.value})
+  }
+
   addPerson = (event) => {
      event.preventDefault()
      console.log('HEI!', this.state);
@@ -32,19 +40,29 @@ class App extends React.Component {
      this.setState({
        persons,
        newName: '',
-       newNumber: ''
+       newNumber: '',
+       backup: persons
      })
    } else {
      alert('Valitsemasi nimi on jo listassa!')
    }
   }
   render() {
+    const numbersToShow =
+      this.state.filter === '' ?
+        this.state.persons :
+        this.state.persons.filter(person =>  person.name.toUpperCase().indexOf(this.state.filter.toUpperCase()) !== -1)
     return (
       <div>
       <div>
         debug: {this.state.newName} JA {this.state.newNumber}
        </div>
         <h2>Puhelinluettelo</h2>
+        <div>
+          rajaa näytettäviä: <input
+            onChange = {this.handleFiltering} />
+        </div>
+        <h2> lisää uusi </h2>
         <form onSubmit={this.addPerson}>
           <div>
             nimi: <input
@@ -64,7 +82,7 @@ class App extends React.Component {
         </form>
         <h2>Numerot</h2>
         <ul>
-          {this.state.persons.map(person => <Person key={person.name}  number={person.number}person={person}/>)}
+          {numbersToShow.map(person => <Person key={person.name}  number={person.number}person={person}/>)}
         </ul>
       </div>
     )
