@@ -38,12 +38,14 @@ class App extends React.Component {
      }
      let index = this.state.persons.findIndex(x => x.name === this.state.newName)
      if(index === -1) {
-       const persons = this.state.persons.concat(personObject)
+       axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
      this.setState({
-       persons,
+       persons: this.state.persons.concat(response.data),
        newName: '',
        newNumber: '',
-       backup: persons
+      })
      })
    } else {
      alert('Valitsemasi nimi on jo listassa!')
