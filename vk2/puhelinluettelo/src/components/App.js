@@ -1,6 +1,6 @@
 import React from 'react';
 import Person from './Person'
-import axios from 'axios'
+import personService from '/home/janantik/Opiskelu/HYFullStackKurssi/vk2/puhelinluettelo/src/services/persons'
 
 class App extends React.Component {
   constructor(props) {
@@ -13,10 +13,10 @@ class App extends React.Component {
     }
   }
   componentWillMount() {
-    axios
-      .get('http://localhost:3001/persons')
+    personService
+      .getAll()
       .then(response => {
-        this.setState({persons: response.data})
+        this.setState({persons:response})
       })
   }
   handlePersonChange = (event) => {
@@ -31,18 +31,17 @@ class App extends React.Component {
 
   addPerson = (event) => {
      event.preventDefault()
-     console.log('HEI!', this.state);
      const personObject = {
        name: this.state.newName,
        number: this.state.newNumber
      }
      let index = this.state.persons.findIndex(x => x.name === this.state.newName)
      if(index === -1) {
-       axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
+       personService
+        .create(personObject)
+        .then(newPerson => {
      this.setState({
-       persons: this.state.persons.concat(response.data),
+       persons: this.state.persons.concat(newPerson),
        newName: '',
        newNumber: '',
       })
@@ -51,6 +50,18 @@ class App extends React.Component {
      alert('Valitsemasi nimi on jo listassa!')
    }
   }
+  poista = (removable) => {
+    if(window.confirm('Haluatko varmasti poistaa ' + removable.name + ' ?')){
+      const filter = this.state.persons.filter(person => person.id !== removable.id)
+      personService
+        .remove(removable.id)
+        .then(data => {
+          this.setState({
+            persons: filter
+          })
+        })
+    }
+  }
   render() {
     const numbersToShow =
       this.state.filter === '' ?
@@ -58,9 +69,6 @@ class App extends React.Component {
         this.state.persons.filter(person =>  person.name.toUpperCase().indexOf(this.state.filter.toUpperCase()) !== -1)
     return (
       <div>
-      <div>
-        debug: {this.state.newName} JA {this.state.newNumber}
-       </div>
         <h2>Puhelinluettelo</h2>
         <div>
           rajaa näytettäviä: <input
@@ -86,7 +94,8 @@ class App extends React.Component {
         </form>
         <h2>Numerot</h2>
         <ul>
-          {numbersToShow.map(person => <Person key={person.name}  number={person.number}person={person}/>)}
+          {numbersToShow.map(person =><li key={person.id}> <Person number={person.number} person={person}/>
+            <button onClick={() => {this.poista(person)}}> poista </button></li>)}
         </ul>
       </div>
     )

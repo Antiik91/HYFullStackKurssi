@@ -9,7 +9,8 @@ class App extends React.Component {
     this.state = {
       lands: [],
       searched: '',
-      country: ''
+      country: '',
+      visible: ''
     }
     this.countrysearch = this.countrysearch.bind(this)
     this.ShowCountry = this.ShowCountry.bind(this)
@@ -35,25 +36,28 @@ class App extends React.Component {
         return ('Too many countries, please add another filter')
       } else if(filteredCountries.length === 1) {
         const country = this.state.lands.find(x => x.name.toUpperCase().indexOf(this.state.searched.toUpperCase()) !== -1).name
-        return this.ShowCountry(country)
+        return this.ShowCountry(country, 'none')
       }
-    
+
       return(
         filteredCountries.map(country => <li key={country} onClick={this.handleClick.bind(this, country)}> {country} </li>)
       )
     }
   }
-  handleClick(countryName) {
+  handleClick(countryName,visibility) {
     console.log('Maan nimi: ', countryName);
-    this.setState({country: countryName})
+    this.setState({country: countryName,
+      visible:true,
+      searched: ''
+    })
   }
   ShowCountry(country) {
     const details = this.state.lands.find(x => x.name.toUpperCase().indexOf(country.toUpperCase()) !== -1)
     return (<Country country={details} />)
 }
 renderSubComp() {
-  if(this.state.country !== '') {
-    return this.ShowCountry(this.state.country)
+  if(this.state.country !== '' && this.state.visible) {
+    return this.ShowCountry(this.state.country, '')
   }
 }
   render() {
@@ -67,7 +71,9 @@ renderSubComp() {
         <div>
           <div>
             {filterLands}
+            <div display={this.state.visible}>
             {this.renderSubComp()}
+            </div>
           </div>
         </div>
       </div>
