@@ -1,6 +1,8 @@
 import React from 'react';
-import Person from './Person'
-import personService from '/home/janantik/Opiskelu/HYFullStackKurssi/vk2/puhelinluettelo/src/services/persons'
+import './index.css'
+import Notification from './components/Notification'
+import Person from './components/Person'
+import personService from './services/persons'
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +11,8 @@ class App extends React.Component {
       persons: [],
       newName: '',
       newNumber: '',
-      filter: ''
+      filter: '',
+      msg: null
     }
   }
   componentWillMount() {
@@ -44,7 +47,11 @@ class App extends React.Component {
        persons: this.state.persons.concat(newPerson),
        newName: '',
        newNumber: '',
+       msg:'lisättiin '+ newPerson.name
       })
+      setTimeout(() => {
+        this.setState({msg: null})
+      }, 3000)
      })
    } else if (window.confirm(personObject.name + 'on jo luettelossa, korvataaanko vanha numero '+
    'uudella?')){
@@ -59,9 +66,22 @@ class App extends React.Component {
         .update(person.id,changedPerson)
         .then(updatedPerson => {
           this.setState({
-            persons: this.state.persons.map(x => x.id !== person.id ? x : changedPerson)
+            persons: this.state.persons.map(x => x.id !== person.id ? x : changedPerson),
+            msg: 'Lisättu uusi numero henkilölle ' + person.name
+          })
+          setTimeout(() => {
+            this.setState({msg: null})
+          }, 3000)
+        })
+        .catch(error => {
+          this.setState({
+            persons: this.state.persons.filter(p => p.id !== person.id),
+            msg: 'error: Valitettavasti henkilö on jo poistettu'
           })
         })
+        setTimeout(() => {
+          this.setState({msg: null})
+        }, 3000)
   }
   poista = (removable) => {
     if(window.confirm('Haluatko varmasti poistaa ' + removable.name + ' ?')){
@@ -70,8 +90,12 @@ class App extends React.Component {
         .remove(removable.id)
         .then(data => {
           this.setState({
-            persons: filter
+            persons: filter,
+            msg: 'Poistettiin '+ removable.name
           })
+          setTimeout(() => {
+            this.setState({msg: null})
+          }, 3000)
         })
     }
   }
@@ -83,6 +107,7 @@ class App extends React.Component {
     return (
       <div>
         <h2>Puhelinluettelo</h2>
+        <Notification message={this.state.msg}/>
         <div>
           rajaa näytettäviä: <input
             onChange = {this.handleFiltering} />
