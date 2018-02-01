@@ -46,9 +46,22 @@ class App extends React.Component {
        newNumber: '',
       })
      })
-   } else {
-     alert('Valitsemasi nimi on jo listassa!')
+   } else if (window.confirm(personObject.name + 'on jo luettelossa, korvataaanko vanha numero '+
+   'uudella?')){
+     const person = this.state.persons.find(person => person.name === personObject.name)
+     this.updatePersonNumber(person, personObject.number)
    }
+  }
+  updatePersonNumber = (person, newNumber) => {
+      const changedPerson = {...person, number: newNumber}
+      console.log('Vanha num: ' +person.number+ ' Ja uusinum: ' + newNumber);
+      personService
+        .update(person.id,changedPerson)
+        .then(updatedPerson => {
+          this.setState({
+            persons: this.state.persons.map(x => x.id !== person.id ? x : changedPerson)
+          })
+        })
   }
   poista = (removable) => {
     if(window.confirm('Haluatko varmasti poistaa ' + removable.name + ' ?')){
